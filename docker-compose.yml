@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  ${APP_NAME}-web:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - .:/usr/src/app
+    command: air ./cmd/main.go -b 0.0.0.0
+    depends_on:
+      - ${APP_NAME}-db
+    restart: unless-stopped
+    networks:
+      - ${APP_NAME}_network
+
+  ${APP_NAME}-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${APP_NAME}-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - ${APP_NAME}_network
+
+volumes:
+  ${APP_NAME}-data:
+
+networks:
+  ${APP_NAME}_network:
