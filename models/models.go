@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 // Customer represents a customer in the system responsible for managing thier own inventory
-type Costumer struct {
+type Customer struct {
 	gorm.Model
 	Name        string      `json:"name"`
 	Inventories []Inventory `json:"inventories"` // One-to-many relationship with Inventory
