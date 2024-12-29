@@ -35,6 +35,10 @@ func ConnectDB() {
 	dbTimezone := os.Getenv("DB_TIMEZONE")
 
 	// Default values if messing
+	if dbHost == "" {
+		dbHost = "db"
+	}
+
 	if dbPort == "" {
 		dbPort = "5432"
 	}
