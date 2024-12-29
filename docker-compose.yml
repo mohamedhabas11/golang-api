@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  ${APP_NAME}-web:
+  web:
     build:
+      dockerfile: Dockerfile
       context: .
     env_file:
       - .env
@@ -10,29 +11,29 @@ services:
       - "${APP_PORT}:${APP_PORT}"
     volumes:
       - .:/usr/src/app
-    command: air ./cmd/main.go -b 0.0.0.0
+    command: air -c /usr/src/app/.air.toml
     depends_on:
-      - ${APP_NAME}-db
+      - db
     restart: unless-stopped
     networks:
-      - ${APP_NAME}_network
+      - golang_api_network
 
-  ${APP_NAME}-db:
+  db:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
-      - ${APP_NAME}-data:/var/lib/postgresql/data
+      - golang_api_data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - ${APP_NAME}_network
+      - golang_api_network
 
 volumes:
-  ${APP_NAME}-data:
+  golang_api_data:
 
 networks:
-  ${APP_NAME}_network:
+  golang_api_network:

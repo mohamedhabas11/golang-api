@@ -1,32 +1,31 @@
-# Stage 1: Build
+# Stage 1: Build dependencies and tools
 FROM golang:1.23.0 AS builder
 
 WORKDIR /usr/src/app
 
+# Install Air globally (leverages Docker's caching)
+RUN go install github.com/air-verse/air@v1.61.5
+
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Download dependencies
+# Download dependencies (caches go mod dependencies separately)
 RUN go mod download
 
-# Copy the entire application code
+# Copy the application code (invalidates cache only when code changes)
 COPY . .
 
-# Build the binary
-RUN go build -o /usr/local/bin/main ./cmd/main.go
+# Stage 2: Runtime (lightweight and uses prebuilt Air)
+FROM golang:1.23.0
 
-# Stage 2: Runtime
-FROM alpine:3.18
+WORKDIR /usr/src/app
 
-# Set environment variables
-ENV GIN_MODE=release
-ENV APP_PORT=3000
+# Copy application files and Air binary from builder
+COPY --from=builder /usr/src/app /usr/src/app
+COPY --from=builder /go/bin/air /usr/local/bin/air
 
-# Copy the binary from the builder stage
-COPY --from=builder /usr/src/app/main /main
-
-# Expose the configurable application port
+# Expose the application port
 EXPOSE ${APP_PORT}
 
-# Run the application
-CMD ["/main"]
+# Set up the command for live reloading
+CMD ["air", "--config", "/usr/src/app/.air.toml"]
