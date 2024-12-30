@@ -67,7 +67,7 @@ func ConnectDB() {
 
 	// Run database migrations (for automatic schema generation)
 	log.Println("Running migrations...")
-	if err := db.AutoMigrate(&models.Customer{}, &models.Inventory{}, &models.Item{}); err != nil {
+	if err := db.AutoMigrate(&models.Customer{}, &models.User{}, &models.Inventory{}, &models.Item{}); err != nil {
 		log.Fatalf("Error running migrations: %v", err)
 	}
 	log.Println("Migrations completed.")
