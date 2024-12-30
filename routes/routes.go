@@ -10,19 +10,25 @@ func SetupRoutes(app *fiber.App) {
 	// Define Default route
 	app.Get("/", handlers.DefaultRoute)
 
+	// Add a basic health check endpoint
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).SendString("OK")
+	})
+
 	// Define routes for customers
-	app.Get("/customers", handlers.GetCustomers)
-	app.Post("/customers", handlers.CreateCustomer)
+	api := app.Group("/api") // Grouping all routes under /api prefix
+	api.Get("/customers", handlers.GetCustomers)
+	api.Post("/customers", handlers.CreateCustomer)
+	api.Get("/customers/items", handlers.GetCustomersItems)
 
 	// Define routes for inventories
-	app.Get("/inventories", handlers.GetInventories)
-	app.Post("/inventories", handlers.CreateInventory)
+	api.Get("/inventories", handlers.GetInventories)
+	api.Post("/inventories", handlers.CreateInventory)
 
 	// Define routes for items
-	app.Get("/items", handlers.GetItems)
-	app.Post("/items", handlers.CreateItem)
+	api.Get("/items", handlers.GetItems)
+	api.Post("/items", handlers.CreateItem)
 
 	// Catch-all route for undefined endpoints
 	app.Use(handlers.NotFoundRoute)
-
 }
