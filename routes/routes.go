@@ -21,4 +21,8 @@ func SetupRoutes(app *fiber.App) {
 	// Define routes for items
 	app.Get("/items", handlers.GetItems)
 	app.Post("/items", handlers.CreateItem)
+
+	// Catch-all route for undefined endpoints
+	app.Use(handlers.NotFoundRoute)
+
 }
