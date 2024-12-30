@@ -16,12 +16,12 @@ func CreateCustomer(c *fiber.Ctx) error {
 
 	// check if a customer with the same email already exists
 	var existingcustomer models.Customer
-	if err := database.DB.Db.Where("email = ?", customer.Email).First(&existingcustomer).Error; err == nil {
+	if err := database.DB.Where("email = ?", customer.Email).First(&existingcustomer).Error; err == nil {
 		return c.Status(fiber.StatusConflict).SendString("Customer with this email already exists")
 	}
 
 	// Insert the customer into the database
-	if result := database.DB.Db.Create(&customer); result.Error != nil {
+	if result := database.DB.Create(&customer); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 
@@ -32,7 +32,7 @@ func CreateCustomer(c *fiber.Ctx) error {
 func GetCustomers(c *fiber.Ctx) error {
 	var customers []models.Customer
 	// Query the database for all customers
-	if result := database.DB.Db.Find(&customers); result.Error != nil {
+	if result := database.DB.Find(&customers); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 
@@ -44,7 +44,7 @@ func GetCustomers(c *fiber.Ctx) error {
 func GetCustomersItems(c *fiber.Ctx) error {
 	var customers_items []models.Customer
 	// Eager load inventories and items
-	if result := database.DB.Db.Preload("Inventories.Items").Find(&customers_items); result.Error != nil {
+	if result := database.DB.Preload("Inventories.Items").Find(&customers_items); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 

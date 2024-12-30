@@ -16,11 +16,11 @@ func CreateInventory(c *fiber.Ctx) error {
 
 	// Check if the associated customer exists
 	var customer models.Customer
-	if err := database.DB.Db.First(&customer, inventory.CustomerID).Error; err != nil {
+	if err := database.DB.First(&customer, inventory.CustomerID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).SendString("Customer not found")
 	}
 
-	if result := database.DB.Db.Create(&inventory); result.Error != nil {
+	if result := database.DB.Create(&inventory); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 
@@ -30,7 +30,7 @@ func CreateInventory(c *fiber.Ctx) error {
 // GetInventories handler to fetch all inventories
 func GetInventories(c *fiber.Ctx) error {
 	var inventories []models.Inventory
-	if result := database.DB.Db.Find(&inventories); result.Error != nil {
+	if result := database.DB.Find(&inventories); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 

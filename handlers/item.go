@@ -15,11 +15,11 @@ func CreateItem(c *fiber.Ctx) error {
 
 	// Check if the associated inventory exists
 	var inventory models.Inventory
-	if err := database.DB.Db.First(&inventory, item.InventoryID).Error; err != nil {
+	if err := database.DB.First(&inventory, item.InventoryID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).SendString("Inventory not found")
 	}
 
-	if result := database.DB.Db.Create(&item); result.Error != nil {
+	if result := database.DB.Create(&item); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 
@@ -29,7 +29,7 @@ func CreateItem(c *fiber.Ctx) error {
 // GetItems handler to fetch all items
 func GetItems(c *fiber.Ctx) error {
 	var items []models.Item
-	if result := database.DB.Db.Find(&items); result.Error != nil {
+	if result := database.DB.Find(&items); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}
 
