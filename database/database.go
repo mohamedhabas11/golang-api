@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/mohamedhabas11/golang-api/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,11 +21,6 @@ var DB DBinstance
 
 // ConnectDB establishes a connection to the PostgreSQL database
 func ConnectDB() {
-	// Load environment variables from .env file
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
 	// Get DataBase connection info from environment variables
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")
@@ -39,15 +33,19 @@ func ConnectDB() {
 	// Default values if missing
 	if dbHost == "" {
 		dbHost = "db"
+		log.Println("DB_HOST is not set. Using default value: db")
 	}
 	if dbPort == "" {
 		dbPort = "5432"
+		log.Println("DB_PORT is not set. Using default value: 5432")
 	}
 	if dbTimezone == "" {
 		dbTimezone = "UTC"
+		log.Println("DB_TIMEZONE is not set. Using default value: UTC")
 	}
 	if dbSslmode == "" {
 		dbSslmode = "disable"
+		log.Println("DB_SSLMODE is not set. Using default value: disable")
 	}
 
 	// Build the Data Source Name (DSN) for PostgreSQL

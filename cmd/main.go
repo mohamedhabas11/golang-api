@@ -9,17 +9,16 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"github.com/mohamedhabas11/golang-api/database"
+	"github.com/mohamedhabas11/golang-api/initializers"
 	"github.com/mohamedhabas11/golang-api/routes"
 )
 
-func main() {
-	// Load environment variables from the .env file
-	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: Error loading .env file: %v", err)
-	}
+func init() {
+	initializers.LoadEnvVariables()
+}
 
+func main() {
 	database.ConnectDB()
 
 	// Create a new Fiber app
