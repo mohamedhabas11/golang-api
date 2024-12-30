@@ -13,6 +13,12 @@ func CreateItem(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
+	// Check if the associated inventory exists
+	var inventory models.Inventory
+	if err := database.DB.Db.First(&inventory, item.InventoryID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).SendString("Inventory not found")
+	}
+
 	if result := database.DB.Db.Create(&item); result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(result.Error.Error())
 	}

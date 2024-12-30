@@ -6,7 +6,8 @@ import "gorm.io/gorm"
 type Customer struct {
 	gorm.Model
 	Name        string      `json:"name"`
-	Inventories []Inventory `json:"inventories"` // One-to-many relationship with Inventory
+	Email       string      `json:"email" gorm:"unique"` // Add the unique constraint
+	Inventories []Inventory `json:"inventories"`         // One-to-many relationship with Inventory
 }
 
 // Inventory represent an inventory owned and managed by a customer

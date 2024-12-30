@@ -9,8 +9,15 @@ import (
 // CreateInventory handler for creating a new inventory
 func CreateInventory(c *fiber.Ctx) error {
 	var inventory models.Inventory
+	// Parse the incoming request body to an inventory model
 	if err := c.BodyParser(&inventory); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	// Check if the associated customer exists
+	var customer models.Customer
+	if err := database.DB.Db.First(&customer, inventory.CustomerID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).SendString("Customer not found")
 	}
 
 	if result := database.DB.Db.Create(&inventory); result.Error != nil {
