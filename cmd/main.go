@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -13,10 +17,9 @@ import (
 func main() {
 	// Load environment variables from the .env file
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Printf("Warning: Error loading .env file: %v", err)
 	}
 
-	// Initialize the database connection
 	database.ConnectDB()
 
 	// Create a new Fiber app
@@ -31,7 +34,28 @@ func main() {
 		port = "3000" // Default port if APP_PORT is not set
 	}
 
-	// Start the server
-	log.Printf("Server started on port %s", port)
-	log.Fatal(app.Listen(":" + port))
+	// Start the server in a goroutine to handle graceful shutdown
+	go func() {
+		log.Printf("Server started on port %s", port)
+		if err := app.Listen(":" + port); err != nil {
+			log.Fatalf("Error starting server: %v", err)
+		}
+	}()
+
+	// Set up signal handling for graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	<-quit // Block until a signal is received
+	log.Println("Shutting down server...")
+
+	// Gracefully shutdown the Fiber app
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := app.ShutdownWithContext(ctx); err != nil {
+		log.Fatalf("Error during server shutdown: %v", err)
+	}
+
+	log.Println("Server exited gracefully")
 }
