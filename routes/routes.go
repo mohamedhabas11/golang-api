@@ -15,17 +15,27 @@ func SetupRoutes(app *fiber.App) {
 		return c.Status(fiber.StatusOK).SendString("OK")
 	})
 
-	// Define routes for customers
-	api := app.Group("/api") // Grouping all routes under /api prefix
+	// Group API routes under `/api` prefix
+	api := app.Group("/api")
+
+	// Customer endpoints
 	api.Get("/customers", handlers.GetCustomers)
 	api.Post("/customers", handlers.CreateCustomer)
 	api.Get("/customers/items", handlers.GetCustomersItems)
 
-	// Define routes for inventories
+	// User endpoints
+	userGroup := api.Group("/users")              // Group user-related routes
+	userGroup.Get("/", handlers.GetUsers)         // Fetch all users
+	userGroup.Post("/", handlers.CreateUser)      // Create a new user
+	userGroup.Get("/:id", handlers.GetUser)       // Fetch a specific user by ID
+	userGroup.Put("/:id", handlers.UpdateUser)    // Update a specific user by ID
+	userGroup.Delete("/:id", handlers.DeleteUser) // Delete a specific user by ID
+
+	// Inventory endpoints
 	api.Get("/inventories", handlers.GetInventories)
 	api.Post("/inventories", handlers.CreateInventory)
 
-	// Define routes for items
+	// Item endpoints
 	api.Get("/items", handlers.GetItems)
 	api.Post("/items", handlers.CreateItem)
 
