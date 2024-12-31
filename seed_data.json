@@ -1,0 +1,54 @@
+{
+    "customers": [
+      {
+        "name": "Customer 1",
+        "email": "customer1@example.com",
+        "users": [
+          {
+            "name": "User 1",
+            "email": "user1@example.com",
+            "password": "password123"
+          },
+          {
+            "name": "User 2",
+            "email": "user2@example.com",
+            "password": "password123"
+          }
+        ],
+        "inventories": [
+          {
+            "inventory_name": "Inventory 1",
+            "items": [
+              {
+                "name": "Item 1",
+                "quantity": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Customer 2",
+        "email": "customer2@example.com",
+        "users": [
+          {
+            "name": "User 3",
+            "email": "user3@example.com",
+            "password": "password123"
+          }
+        ],
+        "inventories": [
+          {
+            "inventory_name": "Inventory 2",
+            "items": [
+              {
+                "name": "Item 2",
+                "quantity": 5
+              }
+            ]
+          }
+        ]
+      }
+    ]
+}
+  

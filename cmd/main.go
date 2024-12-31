@@ -21,6 +21,17 @@ func init() {
 func main() {
 	database.ConnectDB()
 
+	// Check if we need to seed the database
+	if os.Getenv("DB_SEED") == "TRUE" {
+		seedFile := os.Getenv("DB_SEED_FILE") // Get the seed file path from env
+		if seedFile != "" {
+			// Seed the database with data from the specified seed file
+			initializers.SeedDatabase(seedFile)
+		} else {
+			log.Println("No seed file specified")
+		}
+	}
+
 	// Create a new Fiber app
 	app := fiber.New()
 
