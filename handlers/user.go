@@ -7,6 +7,9 @@ import (
 	"github.com/mohamedhabas11/golang-api/utils"
 )
 
+// User password config
+var userPasswordConfig = utils.NewPasswordValidationConfig(8) // Set the minimum length to 8 or your desired value
+
 // CreateUser creates a new user
 func CreateUser(c *fiber.Ctx) error {
 	var user models.User
@@ -16,12 +19,14 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid request body")
 	}
 
-	// Validate email and password
+	// Validate email and password using the config
 	if !utils.ValidateEmail(user.Email) {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid email format")
 	}
-	if !utils.ValidatePassword(user.Password) {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid password")
+
+	// Check password validation result
+	if err := utils.ValidatePassword(user.Password, userPasswordConfig); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid password: " + err.Error())
 	}
 
 	// Check if user already exists
@@ -63,6 +68,7 @@ func GetUsers(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(users)
 }
 
+// GetUser retrieves a user by ID
 func GetUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var user struct {
@@ -106,8 +112,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	if updates.Password != "" {
-		if !utils.ValidatePassword(updates.Password) {
-			return c.Status(fiber.StatusBadRequest).SendString("Invalid password")
+		// Check password validation result
+		if err := utils.ValidatePassword(updates.Password, userPasswordConfig); err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString("Invalid password: " + err.Error())
 		}
 		hashedPassword, err := utils.HashPassword(updates.Password)
 		if err != nil {
