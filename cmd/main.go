@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/mohamedhabas11/golang-api/controllers"
 	"github.com/mohamedhabas11/golang-api/database"
 	"github.com/mohamedhabas11/golang-api/initializers"
-	"github.com/mohamedhabas11/golang-api/routes"
 )
 
 func init() {
@@ -36,7 +36,7 @@ func main() {
 	app := fiber.New()
 
 	// Set up the routes
-	routes.SetupRoutes(app)
+	controllers.SetupRoutes(app)
 
 	// Get the port from the environment variable or use default port 3000
 	port := os.Getenv("APP_PORT")
