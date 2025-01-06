@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/mohamedhabas11/golang-api/middlewares"
 )
 
 // DefaultRoute handler for the root endpoint
@@ -21,38 +22,40 @@ func NotFoundRoute(c *fiber.Ctx) error {
 
 // SetupRoutes defines all the routes for the application
 func SetupRoutes(app *fiber.App) {
-	// Define Default route
+	// Default route
 	app.Get("/", DefaultRoute)
+	app.Get("/health", func(c *fiber.Ctx) error { return c.Status(fiber.StatusOK).SendString("OK") })
 
-	// Add a basic health check endpoint
-	app.Get("/health", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).SendString("OK")
-	})
-
-	// Group API routes under `/api` prefix
+	// Group API routes
 	api := app.Group("/api")
 
-	// Customer endpoints
-	api.Get("/customers", GetCustomers)
-	api.Post("/customers", CreateCustomer)
-	api.Get("/customers/items", GetCustomersItems)
+	// Public routes (No authentication required)
+	api.Post("/user/signup", CreateUser)
+	api.Post("/users/login", Login)
 
-	// User endpoints
-	userGroup := api.Group("/users")      // Group user-related routes
-	userGroup.Get("/", GetUsers)          // Fetch all users
-	userGroup.Put("/:id", UpdateUser)     // Update a specific user by ID
-	userGroup.Get("/:id", GetUser)        // Fetch a specific user by ID
-	userGroup.Delete("/:id", DeleteUser)  // Delete a specific user by ID
-	userGroup.Post("/signup", CreateUser) // Create a new user
-	userGroup.Post("/login", Login)       // Login with existing user, return jwt token
+	// Protected routes (Login required)
+	protected := api.Group("/")
+	protected.Use(middlewares.RequireAuth)
+
+	// Customer endpoints
+	protected.Post("/customers", CreateCustomer)
+	protected.Get("/customers", GetCustomers)
+	protected.Get("/customers/items", GetCustomersItems)
 
 	// Inventory endpoints
-	api.Get("/inventories", GetInventories)
-	api.Post("/inventories", CreateInventory)
+	protected.Post("/inventories", CreateInventory)
+	protected.Get("/inventories", GetInventories)
 
-	// Item endpoints
-	api.Get("/items", GetItems)
-	api.Post("/items", CreateItem)
+	// Item endpoint
+	protected.Post("/items", CreateItem)
+	protected.Get("/items", GetItems)
+
+	// User endpoints
+	userGroup := protected.Group("/users") // Group user-related routes
+	userGroup.Get("/", GetUsers)           // Fetch all users
+	userGroup.Put("/:id", UpdateUser)      // Update a specific user by ID
+	userGroup.Get("/:id", GetUser)         // Fetch a specific user by ID
+	userGroup.Delete("/:id", DeleteUser)   // Delete a specific user by ID
 
 	// Catch-all route for undefined endpoints
 	app.Use(NotFoundRoute)
