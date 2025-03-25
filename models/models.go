@@ -2,39 +2,56 @@ package models
 
 import "gorm.io/gorm"
 
-// Customer represents a customer in the system, responsible for managing their own inventory.
+// Shop represents the business entity with its inventories and staff.
+type Shop struct {
+	gorm.Model
+	Name        string         `json:"name"`
+	Email       string         `json:"email" gorm:"unique"`
+	OwnerID     uint           `json:"owner_id"`    // Reference to the shop owner.
+	Owner       ShopOwner      `json:"owner"`       // One-to-one relation.
+	Employees   []ShopEmployee `json:"employees"`   // One-to-many relation.
+	Inventories []Inventory    `json:"inventories"` // One-to-many relation.
+}
+
+// ShopOwner represents a user who can manage the shop (and its employees/inventories).
+type ShopOwner struct {
+	gorm.Model
+	Name     string `json:"name"`
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"password"`
+	// Additional owner-specific fields can be added here.
+}
+
+// ShopEmployee represents a user working within the shop’s scope.
+type ShopEmployee struct {
+	gorm.Model
+	Name     string `json:"name"`
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"password"`
+	ShopID   uint   `json:"shop_id"` // Foreign key to the Shop.
+}
+
+// Customer represents a simple user who browses and buys items.
 type Customer struct {
 	gorm.Model
-	Name        string      `json:"name"`
-	Email       string      `json:"email" gorm:"unique"` // Unique constraint for the customer email
-	Inventories []Inventory `json:"inventories"`         // One-to-many relationship with Inventory
-	Users       []User      `json:"users"`               // One-to-many relationship with Users (customers can have multiple users)
+	Name     string `json:"name"`
+	Email    string `json:"email" gorm:"unique"`
+	Password string `json:"password"`
+	// Customer-specific fields, like shipping address, can be added.
 }
 
-// User represents a user in the system, who can be associated with a customer.
-type User struct {
-	gorm.Model
-	Name       string   `json:"name"`
-	Email      string   `json:"email" gorm:"unique"` // Unique constraint for user email
-	Password   string   `json:"password"`
-	CustomerID uint     `json:"customer_id"` // Foreign Key to link the user to a customer
-	Customer   Customer `json:"customer"`    // Relationship to Customer
-}
-
-// Inventory represents an inventory owned and managed by a customer.
+// Inventory represents a shop's collection of items.
 type Inventory struct {
 	gorm.Model
-	CustomerID    uint     `json:"customer_id"` // Foreign Key to Customer
-	InventoryName string   `json:"inventory_name"`
-	Items         []Item   `json:"items"`    // One-to-many relationship with Item
-	Customer      Customer `json:"customer"` // Relationship to Customer
+	ShopID        uint   `json:"shop_id"` // Foreign key to Shop.
+	InventoryName string `json:"inventory_name"`
+	Items         []Item `json:"items"` // One-to-many relationship.
 }
 
-// Item represents a unique item in an inventory.
+// Item represents a product in an inventory.
 type Item struct {
 	gorm.Model
-	InventoryID uint      `json:"inventory_id"` // Foreign Key to Inventory
-	Name        string    `json:"name"`
-	Quantity    int       `json:"quantity"`
-	Inventory   Inventory `json:"inventory"` // Relationship to Inventory
+	InventoryID uint   `json:"inventory_id"` // Foreign key to Inventory.
+	Name        string `json:"name"`
+	Quantity    int    `json:"quantity"`
 }

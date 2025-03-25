@@ -1,54 +1,79 @@
 {
-    "customers": [
-      {
-        "name": "Customer 1",
-        "email": "customer1@example.com",
-        "users": [
-          {
-            "name": "User 1",
-            "email": "user1@example.com",
-            "password": "password123"
-          },
-          {
-            "name": "User 2",
-            "email": "user2@example.com",
-            "password": "password123"
-          }
-        ],
-        "inventories": [
-          {
-            "inventory_name": "Inventory 1",
-            "items": [
-              {
-                "name": "Item 1",
-                "quantity": 10
-              }
-            ]
-          }
-        ]
+  "shops": [
+    {
+      "name": "Shop A",
+      "email": "shopA@example.com",
+      "owner": {
+        "name": "Owner A",
+        "email": "ownerA@example.com",
+        "password": "password123"
       },
-      {
-        "name": "Customer 2",
-        "email": "customer2@example.com",
-        "users": [
-          {
-            "name": "User 3",
-            "email": "user3@example.com",
-            "password": "password123"
-          }
-        ],
-        "inventories": [
-          {
-            "inventory_name": "Inventory 2",
-            "items": [
-              {
-                "name": "Item 2",
-                "quantity": 5
-              }
-            ]
-          }
-        ]
-      }
-    ]
+      "employees": [
+        {
+          "name": "Employee A1",
+          "email": "employeeA1@example.com",
+          "password": "password123"
+        },
+        {
+          "name": "Employee A2",
+          "email": "employeeA2@example.com",
+          "password": "password123"
+        }
+      ],
+      "inventories": [
+        {
+          "inventory_name": "Inventory A",
+          "items": [
+            {
+              "name": "Item A1",
+              "quantity": 10
+            },
+            {
+              "name": "Item A2",
+              "quantity": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shop B",
+      "email": "shopB@example.com",
+      "owner": {
+        "name": "Owner B",
+        "email": "ownerB@example.com",
+        "password": "password123"
+      },
+      "employees": [
+        {
+          "name": "Employee B1",
+          "email": "employeeB1@example.com",
+          "password": "password123"
+        }
+      ],
+      "inventories": [
+        {
+          "inventory_name": "Inventory B",
+          "items": [
+            {
+              "name": "Item B1",
+              "quantity": 8
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "customers": [
+    {
+      "name": "Customer 1",
+      "email": "customer1@example.com",
+      "password": "password123"
+    },
+    {
+      "name": "Customer 2",
+      "email": "customer2@example.com",
+      "password": "password123"
+    }
+  ]
 }
-  
